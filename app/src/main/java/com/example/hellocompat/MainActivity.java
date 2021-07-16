@@ -1,20 +1,19 @@
 package com.example.hellocompat;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView mHelloTextView;
-    private String[] mColorArray = {"red", "pink", "purple", "deep_purple",
+    private final String[] mColorArray = {"red", "pink", "purple", "deep_purple",
             "indigo", "blue", "light_blue", "cyan", "teal", "green",
             "light_green", "lime", "yellow", "amber", "orange", "deep_orange",
             "brown", "grey", "blue_grey", "black" };
@@ -44,7 +43,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the color ID from the resources.
 
-        int colorRes = ContextCompat.getColor(this, colorResourceName);
+        int colorRes;
+        
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            colorRes = getResources().getColor(colorResourceName, this.getTheme());
+        }
+        else  colorRes = ContextCompat.getColor(this, colorResourceName);
 
         // Set the text color.
 
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // save the current text color
         outState.putInt("color", mHelloTextView.getCurrentTextColor());
